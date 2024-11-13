@@ -1,1 +1,13 @@
-Allrun
+This repository is a demo case of the numerical simulation of the flow resistance due to golden mussel attachment. It is based on OpenFOAM v8. 
+
+Authors and contributors:
+
+Yuncheng Xu, Ph.D.
+Associate Professor
+College of Water Resources and Civil Engineering
+China Agricultural University
+
+Qingqing Hou
+Graduate Research Assistant 
+College of Water Resources and Civil Engineering
+China Agricultural University
