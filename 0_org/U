@@ -1,0 +1,82 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+inletU          (2 0 0);
+
+internalField          uniform (0 0 0);
+internalField          uniform $inletU;
+
+boundaryField
+{
+    front
+    {
+        type            cyclicAMI;
+        value           uniform $inletU;
+    }
+    back
+    {
+        type            cyclicAMI;
+        value           uniform $inletU;
+    }
+    inlet
+    {
+        type            mapped;
+        field           U;
+        setAverage      1;
+        average         $inletU;
+        interpolationScheme cellPointFace;
+        value           uniform $inletU;
+    }
+    outlet
+    {
+        type            pressureInletOutletVelocity;
+        value           uniform $inletU;
+    }
+    LF.plane.0
+    {
+        type            noSlip;
+    }
+    LF.plane.1
+    {
+        type            noSlip;
+    }
+    LF.plane.2
+    {
+        type            noSlip;
+    }
+    top
+    {
+        type            symmetryPlane;
+    }
+    before.stl
+    {
+        type            noSlip;
+    }
+    after.stl
+    {
+        type            noSlip;
+    }
+    /*"proc.*"
+    {
+        type            processor;
+    }*/
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+cd "${0%/*}" || exit 1
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+./Allclean
+rm 0 -r
+cp 0_org 0 -r
+
+runApplication -append blockMesh -dict system/blockMeshDict
+cp system/decomposeParDict0  system/decomposeParDict
+runApplication -append decomposePar -copyZero 
+
+runParallel -append snappyHexMesh -overwrite
+
+runApplication -append reconstructParMesh -constant -mergeTol 1e-6
+runApplication -append createPatch -overwrite
+
+rm process* -r
+
+#runApplication -append mapFields preCase/ -sourceTime 'latestTime'
+
+cp system/decomposeParDict1 system/decomposeParDict
+
+runApplication -append decomposePar

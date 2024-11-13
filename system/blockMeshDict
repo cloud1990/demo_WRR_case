@@ -1,0 +1,190 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1;
+
+//un 0.005;
+un 0.0075;
+un 0.05;
+un 0.02;
+
+xa -0.3;
+xb 0;
+xc 0.3;
+xd 0.5;
+
+ya -0.1;
+yb 0.1;
+
+za 0;
+zb 5;
+
+
+nx1 #calc "std::floor(($xb - $xa) / $un)";
+ny #calc "std::floor(($yb - $ya) / $un)";
+nz #calc "std::floor(($zb - $za) / $un / 6)";
+nx2 #calc "std::floor(($xc - $xb) / $un)";
+nx3 #calc "std::floor(($xd - $xc) / $un)";
+
+vertices
+(
+    ($xa $ya $za)//0
+    ($xb $ya $za)//1
+    ($xb $yb $za)//2
+    ($xa $yb $za)//3
+
+    ($xa $ya $zb)//4
+    ($xb $ya $zb)//5
+    ($xb $yb $zb)//6
+    ($xa $yb $zb)//7
+
+    ($xc $ya $za)//8
+    ($xd $ya $za)//9
+    ($xd $yb $za)//10
+    ($xc $yb $za)//11
+
+    ($xc $ya $zb)//12
+    ($xd $ya $zb)//13
+    ($xd $yb $zb)//14
+    ($xc $yb $zb)//15
+
+);
+
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) ($nx1 $ny $nz) simpleGrading 
+    (
+    	1 
+    	1 
+    	(
+    	    (0.05 0.3 1)
+    	    (0.95 0.7 25)
+    	)
+    )
+    hex (1 8 11 2 5 12 15 6) ($nx2 $ny $nz) simpleGrading
+    (
+    	1 
+    	1 
+    	(
+    	    (0.05 0.3 1)
+    	    (0.95 0.7 25)
+    	)
+    )
+    hex (8 9 10 11 12 13 14 15) ($nx3 $ny $nz) simpleGrading
+    (
+    	1 
+    	1 
+    	(
+    	    (0.05 0.3 1)
+    	    (0.95 0.7 25)
+    	)
+    )
+);
+
+edges
+(
+);
+
+boundary
+(
+    front0
+    {
+        type cyclicAMI;
+        type symmetry;
+        neighbourPatch back;
+        faces
+        (
+            (3 7 6 2)
+            (2 6 15 11)
+            (11 15 14 10)
+        );
+        transformType unspecified;
+        matchTolerance 0.02;
+        method          mapNearestAMI;
+    }
+    back0
+    {
+        type cyclicAMI;
+        type symmetry;
+        neighbourPatch front;
+        faces
+        (
+            (1 5 4 0)
+            (8 12 5 1)
+            (9 13 12 8)
+        );
+        transformType unspecified;
+        matchTolerance 0.02;
+        method          mapNearestAMI;
+    }
+    inlet
+    {
+        type mappedPatch;
+        sampleMode      nearestCell;
+        sampleRegion    region0;
+        samplePatch     none; 
+        offset          (0.6 0 0);
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (10 14 13 9)
+        );
+    }
+    LF.plane.0
+    {
+        type wall;
+        faces
+        (
+            (0 3 2 1)
+        );
+    }
+    LF.plane.1
+    {
+        type wall;
+        faces
+        (
+            (1 2 11 8)
+        );
+    }
+    LF.plane.2
+    {
+        type wall;
+        faces
+        (
+            (8 11 10 9)
+        );
+    }
+    top
+    {
+        type symmetryPlane;
+        faces
+        (
+            (4 5 6 7)
+            (5 12 15 6)
+            (12 13 14 15)
+        );
+    }
+);
+// ************************************************************************* //
